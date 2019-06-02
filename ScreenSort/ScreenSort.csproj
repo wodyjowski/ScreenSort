@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{56070702-A851-4037-806C-04BB2EE3B8A6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>WBAnimation</RootNamespace>
-    <AssemblyName>WBAnimation</AssemblyName>
+    <RootNamespace>ScreenSort</RootNamespace>
+    <AssemblyName>ScreenSort</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -78,6 +78,8 @@
     <Compile Include="Algorithms\HeapSortAlgorithm.cs" />
     <Compile Include="Algorithms\BubbleSortAlgorithm.cs" />
     <Compile Include="Algorithms\Interfaces\ISortingAlgorithm.cs" />
+    <Compile Include="Algorithms\MergeSortAlgorithm.cs" />
+    <Compile Include="Algorithms\SelectionSortAlgorithm.cs" />
     <Compile Include="Algorithms\QuickSortAlgorithm.cs" />
     <Compile Include="Helpers\ExctensionMethods.cs" />
     <Compile Include="Helpers\ScreenshotMaker.cs" />

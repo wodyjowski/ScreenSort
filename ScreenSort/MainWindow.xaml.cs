@@ -20,6 +20,8 @@ namespace ScreenSort
         private byte[] tempArray;
         private int[] intTempArray;
         private CancellationTokenSource cTokenSource;
+        private DispatcherTimer screenUpdateTimer;
+        private bool isSorting = false;
 
         public MainWindow()
         {
@@ -27,6 +29,9 @@ namespace ScreenSort
             comboBoxSortType.ItemsSource = Enum.GetValues(typeof(SortType)).Cast<SortType>();
             comboBoxSortType.SelectedIndex = 0;
 
+            screenUpdateTimer = new DispatcherTimer();
+            screenUpdateTimer.Interval = TimeSpan.FromMilliseconds(15);
+            screenUpdateTimer.Tick += Dt_Tick;
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
@@ -47,10 +52,12 @@ namespace ScreenSort
 
         private async void SortButton_Click(object sender, RoutedEventArgs e)
         {
-            if(cTokenSource != null)
+            if(isSorting)
             {
-                ResetSort();
+                //ResetSort();
+                isSorting = false;
                 cTokenSource.Cancel();
+                return;
             }
 
 
@@ -69,22 +76,23 @@ namespace ScreenSort
 
 
 
-            DispatcherTimer dt = new DispatcherTimer();
-            dt.Interval = TimeSpan.FromMilliseconds(15);
-            dt.Tick += Dt_Tick;
-            dt.Start();
+            screenUpdateTimer.Start();
 
             SortType srt = (SortType)comboBoxSortType.SelectedValue;
 
 
             cTokenSource = new CancellationTokenSource();
-
+            cTokenSource.Token.Register(() =>
+            {
+                ResetSort();
+            });
 
             Task sortTask = new Task(() =>
             {
-                Sort(intTempArray, srt, dt, cTokenSource.Token);
-            });
+                Sort(intTempArray, srt, screenUpdateTimer, cTokenSource.Token);
+            }, cTokenSource.Token);
 
+            isSorting = true;
             SortButton.Content = "Stop";
             sortTask.Start();
         }
@@ -93,11 +101,6 @@ namespace ScreenSort
         private void Sort(int[] intTempArray, SortType sortType, DispatcherTimer dt, CancellationToken cToken)
         {
             ISortingAlgorithm sortingAlgorithm = null;
-
-            cToken.Register(() =>
-            {
-                ResetSort();
-            });
 
             switch (sortType)
             {
@@ -109,6 +112,12 @@ namespace ScreenSort
                     break;
                 case SortType.HeapSort:
                     sortingAlgorithm = new HeapSortAlgorithm();
+                    break;
+                case SortType.SelectionSort:
+                    sortingAlgorithm = new SelectionSortAlgorithm();
+                    break;
+                case SortType.MergeSort:
+                    sortingAlgorithm = new MergeSortAlgorithm();
                     break;
             }
 

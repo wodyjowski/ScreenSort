@@ -13,22 +13,20 @@ namespace WBAnimation.Algorithms
 
         public void Sort(int[] ArrayToSort)
         {
-            QuickSort(ArrayToSort, 0, ArrayToSort.Length - 1, Token);
+            QuickSort(ArrayToSort, 0, ArrayToSort.Length - 1);
         }
 
-        private void QuickSort(int[] array, int left, int right, CancellationToken cToken)
+        private void QuickSort(int[] array, int left, int right)
         {
-            if (cToken.IsCancellationRequested)
-            {
-                return;
-            }
             var i = left;
             var j = right;
             var pivot = array[(left + right) / 2];
             while (i < j)
             {
-                Task.Delay(TimeSpan.FromMilliseconds(0.84));
-
+                if (Token.IsCancellationRequested)
+                {
+                    return;
+                }
                 while (array[i] < pivot) i++;
                 while (array[j] > pivot) j--;
                 if (i <= j)
@@ -39,8 +37,8 @@ namespace WBAnimation.Algorithms
                     array[j--] = tmp;
                 }
             }
-            if (left < j) QuickSort(array, left, j, cToken);
-            if (i < right) QuickSort(array, i, right, cToken);
+            if (left < j) QuickSort(array, left, j);
+            if (i < right) QuickSort(array, i, right);
         }
     }
 }

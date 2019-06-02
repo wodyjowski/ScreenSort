@@ -10,6 +10,8 @@ namespace ScreenSort
     {
         QuickSort,
         HeapSort,
-        BubbleSort
+        BubbleSort,
+        SelectionSort,
+        MergeSort
     }
 }
