@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using WBAnimation.Algorithms;
 
 namespace ScreenSort
 {
@@ -13,13 +16,17 @@ namespace ScreenSort
     /// </summary>
     public partial class MainWindow : Window
     {
-        public WriteableBitmap ImageBitmap { get; set; }
-        public byte[] tempArray;
-        public int[] intTempArray;
+        private WriteableBitmap ImageBitmap { get; set; }
+        private byte[] tempArray;
+        private int[] intTempArray;
+        private CancellationTokenSource cTokenSource;
 
         public MainWindow()
         {
             InitializeComponent();
+            comboBoxSortType.ItemsSource = Enum.GetValues(typeof(SortType)).Cast<SortType>();
+            comboBoxSortType.SelectedIndex = 0;
+
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
@@ -37,8 +44,15 @@ namespace ScreenSort
 
         }
 
+
         private async void SortButton_Click(object sender, RoutedEventArgs e)
         {
+            if(cTokenSource != null)
+            {
+                ResetSort();
+                cTokenSource.Cancel();
+            }
+
 
             if (ImageBitmap == null)
             {
@@ -60,34 +74,61 @@ namespace ScreenSort
             dt.Tick += Dt_Tick;
             dt.Start();
 
-            SortType srt;
-
-            if (QuickChck.IsChecked ?? false)
-            {
-                srt = SortType.QuickSort;
-            }
-            else if (HeapSort.IsChecked ?? false)
-            {
-                srt = SortType.HeapSort;
-            }
-            else
-            {
-                srt = SortType.SomeSort;
-            }
+            SortType srt = (SortType)comboBoxSortType.SelectedValue;
 
 
+            cTokenSource = new CancellationTokenSource();
 
-            await Task.Run(() =>
+
+            Task sortTask = new Task(() =>
             {
-                Sort(intTempArray, srt);
+                Sort(intTempArray, srt, dt, cTokenSource.Token);
             });
 
-            UpdateBitmap();
-            dt.Stop();
-
-            //ImageBitmap.FromByteArray(tempArray);
-
+            SortButton.Content = "Stop";
+            sortTask.Start();
         }
+
+
+        private void Sort(int[] intTempArray, SortType sortType, DispatcherTimer dt, CancellationToken cToken)
+        {
+            ISortingAlgorithm sortingAlgorithm = null;
+
+            cToken.Register(() =>
+            {
+                ResetSort();
+            });
+
+            switch (sortType)
+            {
+                case SortType.QuickSort:
+                    sortingAlgorithm = new QuickSortAlgorithm();
+                    break;
+                case SortType.BubbleSort:
+                    sortingAlgorithm = new BubbleSortAlgorithm();
+                    break;
+                case SortType.HeapSort:
+                    sortingAlgorithm = new HeapSortAlgorithm();
+                    break;
+            }
+
+            sortingAlgorithm.Token = cToken;
+            sortingAlgorithm.Sort(intTempArray);
+
+            //last bitmap update after sorting
+            dt.Dispatcher.Invoke(() =>
+            {
+                ResetSort();
+            });
+            dt.Stop();
+        }
+
+        private void ResetSort()
+        {
+            UpdateBitmap();
+            SortButton.Content = "Sort";
+        }
+
 
         private void UpdateBitmap()
         {
@@ -99,96 +140,6 @@ namespace ScreenSort
         {
             UpdateBitmap();
         }
-
-        private void Sort(int[] intTempArray, SortType sortType)
-        {
-            switch (sortType)
-            {
-                case SortType.QuickSort:
-                    QuickSort(intTempArray, 0, intTempArray.Length - 1);
-                    break;
-                case SortType.SomeSort:
-                    SomeSort(intTempArray);
-                    break;
-                case SortType.HeapSort:
-                    heapSort(intTempArray, intTempArray.Length);
-                    break;
-            }
-
-        }
-
-        public void SomeSort(int[] array)
-        {
-            int temp = 0;
-
-            for (int write = 0; write < intTempArray.Length; write++)
-            {
-                for (int sort = 0; sort < intTempArray.Length - 1; sort++)
-                {
-                    if (intTempArray[sort] > intTempArray[sort + 1])
-                    {
-                        temp = intTempArray[sort + 1];
-                        intTempArray[sort + 1] = intTempArray[sort];
-                        intTempArray[sort] = temp;
-                    }
-                }
-            }
-
-        }
-
-
-        public void QuickSort(int[] array, int left, int right)
-        {
-            var i = left;
-            var j = right;
-            var pivot = array[(left + right) / 2];
-            while (i < j)
-            {
-                while (array[i] < pivot) i++;
-                while (array[j] > pivot) j--;
-                if (i <= j)
-                {
-                    // swap
-                    var tmp = array[i];
-                    array[i++] = array[j];  // ++ and -- inside array braces for shorter code
-                    array[j--] = tmp;
-                }
-            }
-            if (left < j) QuickSort(array, left, j);
-            if (i < right) QuickSort(array, i, right);
-        }
-
-
-        static void heapSort(int[] arr, int n)
-        {
-            for (int i = n / 2 - 1; i >= 0; i--)
-                heapify(arr, n, i);
-            for (int i = n - 1; i >= 0; i--)
-            {
-                int temp = arr[0];
-                arr[0] = arr[i];
-                arr[i] = temp;
-                heapify(arr, i, 0);
-            }
-        }
-        static void heapify(int[] arr, int n, int i)
-        {
-            int largest = i;
-            int left = 2 * i + 1;
-            int right = 2 * i + 2;
-            if (left < n && arr[left] > arr[largest])
-                largest = left;
-            if (right < n && arr[right] > arr[largest])
-                largest = right;
-            if (largest != i)
-            {
-                int swap = arr[i];
-                arr[i] = arr[largest];
-                arr[largest] = swap;
-                heapify(arr, n, largest);
-            }
-        }
-
 
 
 

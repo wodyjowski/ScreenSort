@@ -14,9 +14,8 @@
         <Button x:Name="startButton" Content="Screenshot" Margin="0,0,10,10" Grid.Row="1" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="StartButton_Click"/>
         <Image x:Name="previewImage" Source="{Binding WriteableBm}" MouseMove="PreviewImage_MouseMove" MouseDown="PreviewImage_MouseDown"/>
         <Button x:Name="SortButton" IsEnabled="False" Content="Sort" Margin="0,0,90,10" Grid.Row="1" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Bottom" Click="SortButton_Click"/>
-        <RadioButton x:Name="SomeChck" Content="BubbleSort" GroupName="SortType" IsChecked="True" Grid.Row="1" RenderTransformOrigin="-0.09,0.66" Margin="0,0,337,12" Height="15" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="81"/>
-        <RadioButton x:Name="QuickChck" Content="QuickSort" GroupName="SortType" HorizontalAlignment="Right" Margin="0,0,185,12" Grid.Row="1" RenderTransformOrigin="-0.09,0.66" Height="15" VerticalAlignment="Bottom"/>
-        <RadioButton x:Name="HeapSort" Content="HeapSort" GroupName="SortType" IsChecked="True" Grid.Row="1" RenderTransformOrigin="-0.09,0.66" Margin="0,0,261,12" Height="15" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="71"/>
+        <ComboBox x:Name="comboBoxSortType" Margin="0,0,170,8" Grid.Row="1" Height="24" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="241"/>
+        <Label Content="Ready" Margin="10,0,0,7" Grid.Row="1" Foreground="#FFF5D231" RenderTransformOrigin="0.465,0.885" Height="26" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="86"/>
 
     </Grid>
 </Window>

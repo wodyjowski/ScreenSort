@@ -8,8 +8,8 @@ namespace ScreenSort
 {
     public enum SortType
     {
-        SomeSort,
         QuickSort,
-        HeapSort
+        HeapSort,
+        BubbleSort
     }
 }

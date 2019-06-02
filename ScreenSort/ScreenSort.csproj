@@ -75,8 +75,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ExctensionMethods.cs" />
-    <Compile Include="ScreenshotMaker.cs" />
+    <Compile Include="Algorithms\HeapSortAlgorithm.cs" />
+    <Compile Include="Algorithms\BubbleSortAlgorithm.cs" />
+    <Compile Include="Algorithms\Interfaces\ISortingAlgorithm.cs" />
+    <Compile Include="Algorithms\QuickSortAlgorithm.cs" />
+    <Compile Include="Helpers\ExctensionMethods.cs" />
+    <Compile Include="Helpers\ScreenshotMaker.cs" />
     <Compile Include="SortTypes.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
