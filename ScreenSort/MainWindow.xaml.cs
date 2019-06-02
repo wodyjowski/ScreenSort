@@ -54,7 +54,6 @@ namespace ScreenSort
         {
             if(isSorting)
             {
-                //ResetSort();
                 isSorting = false;
                 cTokenSource.Cancel();
                 return;
@@ -82,14 +81,11 @@ namespace ScreenSort
 
 
             cTokenSource = new CancellationTokenSource();
-            cTokenSource.Token.Register(() =>
-            {
-                ResetSort();
-            });
 
             Task sortTask = new Task(() =>
             {
-                Sort(intTempArray, srt, screenUpdateTimer, cTokenSource.Token);
+                Sort(intTempArray, srt, cTokenSource.Token);
+                ResetSort();
             }, cTokenSource.Token);
 
             isSorting = true;
@@ -98,7 +94,7 @@ namespace ScreenSort
         }
 
 
-        private void Sort(int[] intTempArray, SortType sortType, DispatcherTimer dt, CancellationToken cToken)
+        private void Sort(int[] intTempArray, SortType sortType, CancellationToken cToken)
         {
             ISortingAlgorithm sortingAlgorithm = null;
 
@@ -123,19 +119,18 @@ namespace ScreenSort
 
             sortingAlgorithm.Token = cToken;
             sortingAlgorithm.Sort(intTempArray);
-
-            //last bitmap update after sorting
-            dt.Dispatcher.Invoke(() =>
-            {
-                ResetSort();
-            });
-            dt.Stop();
         }
 
         private void ResetSort()
         {
-            UpdateBitmap();
-            SortButton.Content = "Sort";
+            //last bitmap update after sorting
+            screenUpdateTimer.Dispatcher.Invoke(() =>
+            {
+                screenUpdateTimer.Stop();
+                UpdateBitmap();
+                SortButton.Content = "Sort";
+            });
+            screenUpdateTimer.Stop();
         }
 
 
