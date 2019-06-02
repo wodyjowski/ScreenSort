@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using WBAnimation.Algorithms;
+using ScreenSort.Algorithms;
 
 namespace ScreenSort
 {
@@ -21,7 +22,23 @@ namespace ScreenSort
         private int[] intTempArray;
         private CancellationTokenSource cTokenSource;
         private DispatcherTimer screenUpdateTimer;
-        private bool isSorting = false;
+
+        private bool wasCancelled = false;
+        private Stopwatch stopwatch;
+
+        private bool _isSorting = false;
+        public bool IsSorting
+        {
+            get
+            {
+                return _isSorting;
+            }
+            set
+            {
+                _isSorting = value;
+                screenshotButton.IsEnabled = !value;
+            }
+        }
 
         public MainWindow()
         {
@@ -52,13 +69,14 @@ namespace ScreenSort
 
         private async void SortButton_Click(object sender, RoutedEventArgs e)
         {
-            if(isSorting)
+            if(IsSorting)
             {
-                isSorting = false;
+                wasCancelled = true;
+                IsSorting = false;
                 cTokenSource.Cancel();
                 return;
             }
-
+            wasCancelled = false;
 
             if (ImageBitmap == null)
             {
@@ -88,8 +106,10 @@ namespace ScreenSort
                 ResetSort();
             }, cTokenSource.Token);
 
-            isSorting = true;
+            IsSorting = true;
             SortButton.Content = "Stop";
+
+            stopwatch = System.Diagnostics.Stopwatch.StartNew();
             sortTask.Start();
         }
 
@@ -126,11 +146,17 @@ namespace ScreenSort
             //last bitmap update after sorting
             screenUpdateTimer.Dispatcher.Invoke(() =>
             {
+                IsSorting = false;
                 screenUpdateTimer.Stop();
                 UpdateBitmap();
                 SortButton.Content = "Sort";
+                screenUpdateTimer.Stop();
+
+                stopwatch.Stop();
+                labelTime.Content = $"Exection time: {stopwatch.Elapsed.TotalMilliseconds}ms";
+
             });
-            screenUpdateTimer.Stop();
+            //wasCancelled
         }
 
 
@@ -163,7 +189,7 @@ namespace ScreenSort
 
         private void PreviewImage_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && !IsSorting)
             {
 
                 double imageScale = ImageBitmap.PixelWidth / previewImage.ActualWidth;

@@ -16,3 +16,4 @@ C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Debug\ScreenSort.cspr
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Debug\ScreenSort.csproj.CopyComplete
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Debug\ScreenSort.exe
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Debug\ScreenSort.pdb
+C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Debug\ScreenSort.csprojAssemblyReference.cache

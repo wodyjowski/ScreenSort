@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace WBAnimation.Algorithms
+namespace ScreenSort.Algorithms
 {
     class MergeSortAlgorithm : ISortingAlgorithm
     {
