@@ -75,5 +75,83 @@ namespace ScreenSort.Algorithms
                 merge(arr, p, q, r);
             }
         }
+
+
+        public void Sort(int[] ArrayToSort, HSBColor[] FloatArrayToSort)
+        {
+            mergeSort(ArrayToSort, 0, ArrayToSort.Length - 1, FloatArrayToSort);
+        }
+
+
+        public void merge(int[] arr, int p, int q, int r, HSBColor[] FloatArrayToSort)
+        {
+            int i, j, k;
+            int n1 = q - p + 1;
+            int n2 = r - q;
+            HSBColor[] L = new HSBColor[n1];
+            HSBColor[] R = new HSBColor[n2];
+
+            int[] Li = new int[n1];
+            int[] Ri = new int[n2];
+
+            for (i = 0; i < n1; i++)
+            {
+                L[i] = FloatArrayToSort[p + i];
+                Li[i] = arr[p + i];
+            }
+            for (j = 0; j < n2; j++)
+            {
+                R[j] = FloatArrayToSort[q + 1 + j];
+                Ri[j] = arr[q + 1 + j];
+            }
+            i = 0;
+            j = 0;
+            k = p;
+            while (i < n1 && j < n2)
+            {
+                if (L[i] <= R[j])
+                {
+                    FloatArrayToSort[k] = L[i];
+                    arr[k] = Li[i];
+                    i++;
+                }
+                else
+                {
+                    FloatArrayToSort[k] = R[j];
+                    arr[k] = Ri[j];
+                    j++;
+                }
+                k++;
+            }
+            while (i < n1)
+            {
+                FloatArrayToSort[k] = L[i];
+                arr[k] = Li[i];
+                i++;
+                k++;
+            }
+            while (j < n2)
+            {
+                FloatArrayToSort[k] = R[j];
+                arr[k] = Ri[j];
+                j++;
+                k++;
+            }
+        }
+        public void mergeSort(int[] arr, int p, int r, HSBColor[] FloatArrayToSort)
+        {
+            if (Token.IsCancellationRequested)
+            {
+                return;
+            }
+            if (p < r)
+            {
+                int q = (p + r) / 2;
+                mergeSort(arr, p, q, FloatArrayToSort);
+                mergeSort(arr, q + 1, r, FloatArrayToSort);
+                merge(arr, p, q, r, FloatArrayToSort);
+            }
+        }
+
     }
 }

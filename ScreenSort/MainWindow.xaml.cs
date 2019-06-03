@@ -3,12 +3,15 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using ScreenSort.Algorithms;
+using ScreenSort.Helpers;
 
 namespace ScreenSort
 {
@@ -20,6 +23,7 @@ namespace ScreenSort
         private WriteableBitmap ImageBitmap { get; set; }
         private byte[] tempArray;
         private int[] intTempArray;
+        HSBColor[] hueArray;
         private CancellationTokenSource cTokenSource;
         private DispatcherTimer screenUpdateTimer;
 
@@ -49,6 +53,10 @@ namespace ScreenSort
             screenUpdateTimer = new DispatcherTimer();
             screenUpdateTimer.Interval = TimeSpan.FromMilliseconds(15);
             screenUpdateTimer.Tick += Dt_Tick;
+
+            labelTime.Foreground = System.Windows.Media.Brushes.Orange;
+
+            setResolutionText(textBoxResolution);
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
@@ -56,20 +64,19 @@ namespace ScreenSort
             ScreenshotMaker screenshotMaker = new ScreenshotMaker();
 
 
-            var bitmap = screenshotMaker.takeScreenshot().ToBitmapSource();
+            var tupleRes = GetResolution();
+
+            var bitmap = screenshotMaker.takeScreenshot(tupleRes.Item1, tupleRes.Item2).ToBitmapSource();
             ImageBitmap = new WriteableBitmap(bitmap);
 
-
-            previewImage.Source = ImageBitmap;
-
-            SortButton.IsEnabled = true;
+            SetImage();
 
         }
 
 
         private async void SortButton_Click(object sender, RoutedEventArgs e)
         {
-            if(IsSorting)
+            if (IsSorting)
             {
                 wasCancelled = true;
                 IsSorting = false;
@@ -85,13 +92,32 @@ namespace ScreenSort
 
             tempArray = ImageBitmap.ToByteArray();
             intTempArray = new int[tempArray.Length / 4];
+            hueArray = new HSBColor[intTempArray.Length];
 
             for (int i = 0; i < intTempArray.Length; i++)
             {
                 intTempArray[i] = BitConverter.ToInt32(tempArray, i * 4);
+                var color = Color.FromArgb(intTempArray[i]);
+                hueArray[i] = new HSBColor();
+
+                hueArray[i].Saturation = color.GetSaturation();
+                hueArray[i].Hue = color.GetHue();
+                hueArray[i].Brightness = color.GetBrightness();
+
+
+                    
+                    //=  (color.GetHue() * 10000) + (color.GetBrightness() * 100000) + color.GetSaturation();
+
             }
 
+            //byte[] byt = new byte[4] { 0, 255, 234, 0 }; //bgra
 
+            //var test = Color.FromArgb(BitConverter.ToInt32(byt, 0));
+            //var hue = test.GetHue();
+
+            //var x = Color.Red.GetHue();
+            //var y = Color.Green.GetHue();
+            //var z = Color.Blue.GetHue();
 
             screenUpdateTimer.Start();
 
@@ -100,21 +126,27 @@ namespace ScreenSort
 
             cTokenSource = new CancellationTokenSource();
 
+            bool hsb = checkBoxHSB.IsChecked ?? false;
+
+
             Task sortTask = new Task(() =>
             {
-                Sort(intTempArray, srt, cTokenSource.Token);
+                Sort(intTempArray, srt, cTokenSource.Token, hueArray, hsb);
                 ResetSort();
             }, cTokenSource.Token);
 
             IsSorting = true;
             SortButton.Content = "Stop";
 
+            labelTime.Foreground = System.Windows.Media.Brushes.Orange;
+            labelTime.Content = "Executing...";
+
             stopwatch = System.Diagnostics.Stopwatch.StartNew();
             sortTask.Start();
         }
 
 
-        private void Sort(int[] intTempArray, SortType sortType, CancellationToken cToken)
+        private void Sort(int[] intTempArray, SortType sortType, CancellationToken cToken, HSBColor[] floatSortArray, bool hsb)
         {
             ISortingAlgorithm sortingAlgorithm = null;
 
@@ -135,10 +167,25 @@ namespace ScreenSort
                 case SortType.MergeSort:
                     sortingAlgorithm = new MergeSortAlgorithm();
                     break;
+                case SortType.ParallelQuickSort:
+                    sortingAlgorithm = new ParallelQuickSortAlgorithm();
+                    break;
+                case SortType.ParalellMergeSort:
+                    sortingAlgorithm = new ParalellMergeSortAlgorithm();
+                    break;
             }
 
             sortingAlgorithm.Token = cToken;
-            sortingAlgorithm.Sort(intTempArray);
+
+            if (hsb)
+            {
+                sortingAlgorithm.Sort(intTempArray, floatSortArray);
+            }
+            else
+            {
+                sortingAlgorithm.Sort(intTempArray);
+            }
+
         }
 
         private void ResetSort()
@@ -153,7 +200,9 @@ namespace ScreenSort
                 screenUpdateTimer.Stop();
 
                 stopwatch.Stop();
-                labelTime.Content = $"Exection time: {stopwatch.Elapsed.TotalMilliseconds}ms";
+
+                labelTime.Foreground = System.Windows.Media.Brushes.LightGreen;
+                labelTime.Content = $"{stopwatch.Elapsed.TotalMilliseconds}ms";
 
             });
             //wasCancelled
@@ -229,9 +278,57 @@ namespace ScreenSort
             }
         }
 
+        private void SetImage()
+        {
+            previewImage.Source = ImageBitmap;
+            SortButton.IsEnabled = true;
+        }
+
+        private void TextBox_Validation(object sender, RoutedEventArgs e)
+        {
+            validateResolution((TextBox)sender);
+        }
+
+        private void TextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key == System.Windows.Input.Key.Enter)
+            {
+                validateResolution((TextBox)sender);
+            }
+        }
+
+        private void validateResolution(TextBox sender)
+        {
+            Regex rg = new Regex(@"([0-9])+x([0-9])+");
+
+            if (!rg.IsMatch(sender.Text))
+            {
+                setResolutionText(sender);
+            }
+        }
+
+        private void setResolutionText(TextBox sender)
+        {
+            sender.Text = $"{SystemParameters.VirtualScreenWidth}x{SystemParameters.VirtualScreenHeight}";
+        }
+
+        private Tuple<int, int> GetResolution()
+        {
+            var res = textBoxResolution.Text.Split('x');
+
+            return new Tuple<int, int>(int.Parse(res[0]),int.Parse(res[1]));    
+        }
+
+        private void RandomButton_Click(object sender, RoutedEventArgs e)
+        {
+            var tupleRes = GetResolution();
 
 
+            RandomBitmapGenerator rbg = new RandomBitmapGenerator(tupleRes.Item1, tupleRes.Item2);
+            ImageBitmap = rbg.GenerateRandomWritableBitmap(checkBoxHSB.IsChecked ?? false);
+            
+            SetImage();
 
-
+        }
     }
 }

@@ -47,5 +47,47 @@ namespace ScreenSort.Algorithms
                 }
             }
         }
+
+        public void Sort(int[] ArrayToSort, HSBColor[] FloatArrayToSort)
+        {
+            IntArraySelectionSort(ArrayToSort, FloatArrayToSort);
+        }
+
+        public int IntArrayMin(int[] data, int start, HSBColor[] FloatArrayToSort)
+        {
+            int minPos = start;
+            for (int pos = start + 1; pos < FloatArrayToSort.Length; pos++)
+                if (FloatArrayToSort[pos] < FloatArrayToSort[minPos])
+                    minPos = pos;
+            return minPos;
+        }
+
+        public void IntArraySelectionSort(int[] data, HSBColor[] FloatArrayToSort)
+        {
+            int i;
+            int N = FloatArrayToSort.Length;
+
+            for (i = 0; i < N - 1; i++)
+            {
+                if (Token.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                int k = IntArrayMin(data, i, FloatArrayToSort);
+                if (i != k)
+                {
+                    HSBColor temporary;
+                    temporary = FloatArrayToSort[i];
+                    FloatArrayToSort[i] = FloatArrayToSort[k];
+                    FloatArrayToSort[k] = temporary;
+
+                    int temporary1;
+                    temporary1 = data[i];
+                    data[i] = data[k];
+                    data[k] = temporary1;
+                }
+            }
+        }
     }
 }

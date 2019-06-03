@@ -12,5 +12,6 @@ namespace ScreenSort.Algorithms
         CancellationToken Token { get; set; }
 
         void Sort(int[] ArrayToSort);
+        void Sort(int[] ArrayToSort, HSBColor[] FloatArrayToSort);
     }
 }

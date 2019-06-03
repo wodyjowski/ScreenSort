@@ -19,15 +19,23 @@ namespace ScreenSort
             screenHeight = SystemParameters.VirtualScreenHeight;
         }
 
-        public Bitmap takeScreenshot()
+        public Bitmap takeScreenshot(int x, int y)
         {
-            Bitmap bmp = new Bitmap((int)screenWidth, (int)screenHeight, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-            using (Graphics g = Graphics.FromImage(bmp))
+            Bitmap bmpRes = new Bitmap(x, y, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            using (Bitmap bmp = new Bitmap((int)screenWidth, (int)screenHeight, System.Drawing.Imaging.PixelFormat.Format32bppRgb))
             {
-                String filename = "ScreenCapture-" + DateTime.Now.ToString("ddMMyyyy-hhmmss") + ".png";
-                g.CopyFromScreen((int)screenLeft, (int)screenTop, 0, 0, bmp.Size);
-                //bmp.Save(filename);
-                return bmp;
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    using (Graphics g1 = Graphics.FromImage(bmpRes))
+                    {
+                        g.CopyFromScreen((int)screenLeft, (int)screenTop, 0, 0, bmp.Size);
+
+                        g1.DrawImage(bmp, new RectangleF(0,0, bmpRes.Width, bmpRes.Height), new RectangleF(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
+
+                        return bmpRes;
+                    }
+                }
+
             }
         }
 
