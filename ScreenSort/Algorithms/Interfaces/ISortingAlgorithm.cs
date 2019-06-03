@@ -10,6 +10,7 @@ namespace ScreenSort.Algorithms
     interface ISortingAlgorithm
     {
         CancellationToken Token { get; set; }
+        int Delay { get; set; }
 
         void Sort(int[] ArrayToSort);
         void Sort(int[] ArrayToSort, HSBColor[] FloatArrayToSort);

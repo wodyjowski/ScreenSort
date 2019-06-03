@@ -128,10 +128,12 @@ namespace ScreenSort
 
             bool hsb = checkBoxHSB.IsChecked ?? false;
 
+            int delay = 0;
+            int.TryParse(textBoxDelay.Text, out delay);
 
             Task sortTask = new Task(() =>
             {
-                Sort(intTempArray, srt, cTokenSource.Token, hueArray, hsb);
+                Sort(intTempArray, srt, cTokenSource.Token, hueArray, hsb, delay);
                 ResetSort();
             }, cTokenSource.Token);
 
@@ -146,7 +148,7 @@ namespace ScreenSort
         }
 
 
-        private void Sort(int[] intTempArray, SortType sortType, CancellationToken cToken, HSBColor[] floatSortArray, bool hsb)
+        private void Sort(int[] intTempArray, SortType sortType, CancellationToken cToken, HSBColor[] floatSortArray, bool hsb, int delay)
         {
             ISortingAlgorithm sortingAlgorithm = null;
 
@@ -167,8 +169,6 @@ namespace ScreenSort
                 case SortType.MergeSort:
                     sortingAlgorithm = new MergeSortAlgorithm();
                     break;
-                case SortType.ParallelQuickSort:
-                    sortingAlgorithm = new ParallelQuickSortAlgorithm();
                     break;
                 case SortType.ParalellMergeSort:
                     sortingAlgorithm = new ParalellMergeSortAlgorithm();
@@ -176,6 +176,9 @@ namespace ScreenSort
             }
 
             sortingAlgorithm.Token = cToken;
+
+
+            sortingAlgorithm.Delay = delay;
 
             if (hsb)
             {

@@ -10,6 +10,7 @@ namespace ScreenSort.Algorithms
     class HeapSortAlgorithm : ISortingAlgorithm
     {
         public CancellationToken Token { get; set; }
+        public int Delay { get; set; }
 
         public void Sort(int[] ArrayToSort)
         {
@@ -22,6 +23,7 @@ namespace ScreenSort.Algorithms
                 heapify(arr, n, i);
             for (int i = n - 1; i >= 0 && !Token.IsCancellationRequested; i--)
             {
+                Task.Delay(Delay);
                 int temp = arr[0];
                 arr[0] = arr[i];
                 arr[i] = temp;
@@ -58,6 +60,7 @@ namespace ScreenSort.Algorithms
                 heapify(arr, n, i, FloatArrayToSort);
             for (int i = n - 1; i >= 0 && !Token.IsCancellationRequested; i--)
             {
+                Task.Delay(Delay);
                 var temp = FloatArrayToSort[0];
                 FloatArrayToSort[0] = FloatArrayToSort[i];
                 FloatArrayToSort[i] = temp;

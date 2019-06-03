@@ -9,7 +9,6 @@ namespace ScreenSort
     public enum SortType
     {
         QuickSort,
-        ParallelQuickSort,
         HeapSort,
         BubbleSort,
         SelectionSort,

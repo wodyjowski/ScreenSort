@@ -83,9 +83,8 @@
     <Compile Include="Algorithms\Interfaces\ISortingAlgorithm.cs" />
     <Compile Include="Algorithms\MergeSortAlgorithm.cs" />
     <Compile Include="Algorithms\ParalellMergeSortAlgorithm.cs" />
-    <Compile Include="Algorithms\ParallelQuickSortAlgorithm.cs" />
-    <Compile Include="Algorithms\SelectionSortAlgorithm.cs" />
     <Compile Include="Algorithms\QuickSortAlgorithm.cs" />
+    <Compile Include="Algorithms\SelectionSortAlgorithm.cs" />
     <Compile Include="Helpers\ExctensionMethods.cs" />
     <Compile Include="Helpers\RandomBitmapGenerator.cs" />
     <Compile Include="Helpers\ScreenshotMaker.cs" />

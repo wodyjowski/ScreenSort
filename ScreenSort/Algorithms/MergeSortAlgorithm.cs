@@ -10,6 +10,7 @@ namespace ScreenSort.Algorithms
     class MergeSortAlgorithm : ISortingAlgorithm
     {
         public CancellationToken Token { get; set; }
+        public int Delay { get; set; }
 
         public void Sort(int[] ArrayToSort)
         {
@@ -69,6 +70,7 @@ namespace ScreenSort.Algorithms
             }
             if (p < r)
             {
+                Task.Delay(Delay);
                 int q = (p + r) / 2;
                 mergeSort(arr, p, q);
                 mergeSort(arr, q + 1, r);
@@ -146,6 +148,7 @@ namespace ScreenSort.Algorithms
             }
             if (p < r)
             {
+                Task.Delay(Delay);
                 int q = (p + r) / 2;
                 mergeSort(arr, p, q, FloatArrayToSort);
                 mergeSort(arr, q + 1, r, FloatArrayToSort);

@@ -10,6 +10,7 @@ namespace ScreenSort.Algorithms
     class BubbleSortAlgorithm : ISortingAlgorithm
     {
         public CancellationToken Token { get; set; }
+        public int Delay { get; set; }
 
         public void Sort(int[] ArrayToSort)
         {

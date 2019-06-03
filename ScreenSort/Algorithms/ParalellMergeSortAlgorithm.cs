@@ -10,31 +10,18 @@ namespace ScreenSort.Algorithms
     class ParalellMergeSortAlgorithm : ISortingAlgorithm
     {
         public CancellationToken Token { get; set; }
+        public int Delay { get; set; }
 
         public void Sort(int[] ArrayToSort)
         {
-            StoParallelMergeSort<int> stM = new StoParallelMergeSort<int>();
+            StoParallelMergeSort<int> stM = new StoParallelMergeSort<int>(Token);
             stM.Sort(ArrayToSort);
-        }
-
-        public void Sort(int[] ArrayToSort, float[] FloatArrayToSort)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Sort(int[] ArrayToSort, ref float[] FloatArrayToSort)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Sort(int[] ArrayToSort, int[] FloatArrayToSort)
-        {
-            throw new NotImplementedException();
         }
 
         public void Sort(int[] ArrayToSort, HSBColor[] FloatArrayToSort)
         {
-            throw new NotImplementedException();
+            StoParallelMergeSort<int> stM = new StoParallelMergeSort<int>(Token);
+            stM.Sort(ArrayToSort);
         }
     }
 
@@ -46,10 +33,13 @@ namespace ScreenSort.Algorithms
         private readonly int _maxParallelDepth;
         private bool _ascending = true;
 
-        public StoParallelMergeSort()
+        public CancellationToken Token { get; }
+
+        public StoParallelMergeSort(CancellationToken Token)
         {
             _comparer = Comparer<T>.Default;
             _maxParallelDepth = DetermineMaxParallelDepth();
+            this.Token = Token;
         }
 
         public StoParallelMergeSort(Comparison<T> comparison)
@@ -70,6 +60,11 @@ namespace ScreenSort.Algorithms
 
         public void Sort(T[] list, bool ascending = true)
         {
+            if(Token.IsCancellationRequested)
+            {
+                return;
+            }
+
             if (list == null)
                 throw new ArgumentNullException("list");
             if (list.Length < 2)

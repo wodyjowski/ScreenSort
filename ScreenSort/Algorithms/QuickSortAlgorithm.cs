@@ -10,6 +10,7 @@ namespace ScreenSort.Algorithms
     class QuickSortAlgorithm : ISortingAlgorithm
     {
         public CancellationToken Token { get; set; }
+        public int Delay { get; set; }
 
         public void Sort(int[] ArrayToSort)
         {
@@ -47,6 +48,7 @@ namespace ScreenSort.Algorithms
                     array[j--] = tmp2;
                 }
             }
+            Task.Delay(Delay);
             if (left < j) QuickSort(array, left, j, FloatArrayToSort);
             if (i < right) QuickSort(array, i, right, FloatArrayToSort);
         }
@@ -74,6 +76,7 @@ namespace ScreenSort.Algorithms
                     array[j--] = tmp;
                 }
             }
+            Task.Delay(Delay);
             if (left < j) QuickSort(array, left, j);
             if (i < right) QuickSort(array, i, right);
         }
