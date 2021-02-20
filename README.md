@@ -31,4 +31,5 @@ User can draw single colored lines by moving the mouse while pressing left mouse
   
 ## External libraries
 
-SreenSort uses **WriteableBitmapEx** library, in particular the `WritableBitmap.ToByteArray()` method to easily create byte array from WritableBitmap object.
+SreenSort uses **WriteableBitmapEx** (https://github.com/reneschulte/WriteableBitmapEx) library,
+in particular the `WritableBitmap.ToByteArray()` extension method to easily create byte array from WritableBitmap object.
