@@ -4,7 +4,6 @@ C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\bin\Release\ScreenSort.pd
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\bin\Release\WriteableBitmapEx.Wpf.dll
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\bin\Release\WriteableBitmapEx.Wpf.pdb
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\bin\Release\WriteableBitmapEx.Wpf.xml
-C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Release\ScreenSort.csprojAssemblyReference.cache
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Release\MainWindow.g.cs
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Release\App.g.cs
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Release\ScreenSort_MarkupCompile.cache
@@ -17,3 +16,4 @@ C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Release\ScreenSort.cs
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Release\ScreenSort.csproj.CopyComplete
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Release\ScreenSort.exe
 C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Release\ScreenSort.pdb
+C:\Users\wodyjowski\source\repos\ScreenSort\ScreenSort\obj\Release\ScreenSort.csprojAssemblyReference.cache
